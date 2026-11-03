@@ -59,6 +59,8 @@ app.use('/api/order' , orderRouter)
 app.use("/api/v1" , razorpayRouter)
 
 
-app.listen(port , ()=>{
-    console.log(`Server is running on http://localhost:${port}`)
-})
+// app.listen(port , ()=>{
+//     console.log(`Server is running on http://localhost:${port}`)
+// })
+
+export default app;
