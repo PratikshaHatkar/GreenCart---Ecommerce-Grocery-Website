@@ -1,15 +1,21 @@
 
 # Dependencies
-node_modules/
+**/node_modules/
 
 # Environment variables
-.env
-.env.*
+**/.env
+**/.env.*
 !.env.example
+!**/.env.example
 
 # Text files
-*.text
 *.txt
+*.text
+
+# Build files
+**/dist/
+**/build/
+dist-ssr/
 
 # Logs
 logs/
@@ -19,9 +25,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Build files
-dist/
-build/
-
-# Local files
-*.local
+# Editor files
+.vscode/
+.idea/
+.DS_Store
