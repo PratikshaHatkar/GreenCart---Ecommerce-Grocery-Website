@@ -7,6 +7,7 @@ import star_dull_icon from "./star_dull_icon.svg";
 import cart_icon from "./cart_icon.svg";
 import nav_cart_icon from "./nav_cart_icon.svg";
 import add_icon from "./add_icon.svg";
+import dashboard_icon from "./dashboard_icon.svg";
 import refresh_icon from "./refresh_icon.svg";
 import product_list_icon from "./product_list_icon.svg";
 import order_icon from "./order_icon.svg";
@@ -80,6 +81,7 @@ export const assets = {
   cart_icon,
   nav_cart_icon,
   add_icon,
+  dashboard_icon,
   refresh_icon,
   product_list_icon,
   order_icon,

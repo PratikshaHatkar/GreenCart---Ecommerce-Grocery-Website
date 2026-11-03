@@ -36,4 +36,6 @@ frontend is worked properly
 
 next part is the backend 
 
+npm i recharts installed 
+npm ls react react-dom recharts installed in client
 

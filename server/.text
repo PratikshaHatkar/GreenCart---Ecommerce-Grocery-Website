@@ -1,3 +1,15 @@
+user: raju@1.com
+123 ,,
+ram@1.com
+4567
+
+farmer :
+pratiksha@2.com
+1234
+
+farmer dashboard vr profile , category remove other categories , if possible then make the order management , user profile 
+
+
 backend setup start 
 npm init -y
 
@@ -70,3 +82,6 @@ addaddress
  9:23 -- placeorder : cod
 
  9:36 -- payment gateway
+
+
+

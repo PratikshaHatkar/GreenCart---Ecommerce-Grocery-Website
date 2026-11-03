@@ -9,12 +9,13 @@ import dotenv from 'dotenv'
 
 
 import userRouter from "./routes/userRoute.js";
-import sellerRouter from "./routes/sellerRoute.js";
+// import sellerRouter from "./routes/sellerRoute.js";
 import productRouter from "./routes/productRoute.js";
 import cartRouter from "./routes/cartRoute.js";
 import connectCloudinary from "./configs/cloudinary.js";
 import addressRouter from "./routes/addressRoute.js";
 import orderRouter from "./routes/orderRoute.js";
+import DashboardRouter from "./routes/DashboardRoute.js";
 import razorpayRouter from "./routes/razorpayRoute.js";
 import { v2 as cloudinary } from 'cloudinary';
 
@@ -49,7 +50,8 @@ app.use(cors({origin:  allowedOrigins, credentials:true}))
 
 app.get('/' , (req , res)=> res.send("API is working"));
 app.use('/api/user' , userRouter)
-app.use('/api/seller' , sellerRouter)
+app.use('/api/dashboard' , DashboardRouter)
+// app.use('/api/seller' , sellerRouter)
 app.use('/api/product' , productRouter)
 app.use('/api/cart' , cartRouter)
 app.use('/api/address' , addressRouter)

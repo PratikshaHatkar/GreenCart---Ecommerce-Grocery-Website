@@ -1,97 +1,228 @@
 
 import Product from "../models/Product.js";
 import Order from "../models/Order.js";
-import stripe from "stripe"
 
-export const placeOrderRazorpay = async (req,res)=>{
-    try{
-        const {userId,items,address}=req.body;
 
-        let amount = await items.reduce(async(acc,item)=>{
+
+
+// Place Order - Razorpay
+
+export const placeOrderRazorpay = async (req, res) => {
+    try {
+        const { items, address } = req.body;
+
+        const consumerId = req.user.id;
+
+        if (!address || !items || items.length === 0) {
+            return res.json({
+                success: false,
+                message: "Invalid order data",
+            });
+        }
+
+        let amount = 0;
+        let farmerId = null;
+
+        for (const item of items) {
             const product = await Product.findById(item.product);
-            return (await acc) + product.offerPrice * item.quantity;
-        },0);
 
+            if (!product) {
+                return res.json({
+                    success: false,
+                    message: "Product not found",
+                });
+            }
+
+            amount += product.offerPrice * item.quantity;
+
+            // Assumes all products belong to one farmer
+            if (!farmerId) {
+                farmerId = product.farmerId;
+            }
+        }
+
+        // 2% Tax
         amount += Math.floor(amount * 0.02);
 
         const order = await Order.create({
-            userId,
+            consumerId,
+            farmerId,
             items,
             amount,
             address,
-            paymentType:"Online"
+            paymentType: "Online",
+            isPaid: false,
         });
-        
 
-        res.json({
-            success:true,
+        return res.json({
+            success: true,
             amount,
-            orderId:order._id
+            orderId: order._id,
         });
-        // return res.json({success:true , message:"Order Placed Successfully"})
 
-    }catch(error){
-        res.json({
-            success:false,
-            message:error.message
+    } catch (error) {
+        console.log(error);
+        return res.json({
+            success: false,
+            message: error.message,
         });
     }
-}
+};
 
-//Place Order COD : /api/order/cod
-export const placeOrderCOD = async (req , res)=>{
-    try{
-        const {userId , items , address} = req.body;
-        if(!address || items.length === 0){
-            return res.json({success:false , message:"Invalid data"})
+// ==========================
+// Place Order - COD
+// ==========================
+export const placeOrderCOD = async (req, res) => {
+    try {
+        const { items, address } = req.body;
+
+        const consumerId = req.user.id;
+
+        if (!address || items.length === 0) {
+            return res.json({
+                success: false,
+                message: "Invalid data",
+            });
         }
-            //Calculate Amout Using Items
-            let amount = await items.reduce(async (acc , item)=>{
-                const product = await Product.findById(item.product);
-                return (await acc) + product.offerPrice * item.quantity;
-            } , 0)
 
-            //Add Tax Charge (2%)
-            amount += Math.floor(amount * 0.02);
+        let amount = 0;
+        let farmerId = null;
 
-            await Order.create({
-                userId , 
-                items,
-                amount,
-                address,
-                paymentType:"COD",
-            }) 
-            return res.json({success:true , message:"Order Placed Successfully"})
+        for (const item of items) {
+            const product = await Product.findById(item.product);
+
+            if (!product) {
+                return res.json({
+                    success: false,
+                    message: "Product not found",
+                });
+            }
+
+            amount += product.offerPrice * item.quantity;
+
+            if (!farmerId) {
+                farmerId = product.farmerId;
+            }
+        }
+
+        // 2% Tax
+        amount += Math.floor(amount * 0.02);
+
+        await Order.create({
+            consumerId,
+            farmerId,
+            items,
+            amount,
+            address,
+            paymentType: "COD",
+        });
+
+        return res.json({
+            success: true,
+            message: "Order Placed Successfully",
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.json({
+            success: false,
+            message: error.message,
+        });
     }
-    catch(error){
-        res.json({success:false , message:error.message})
-    }
-}
+};
 
-//Get orders by User ID : /api/order/user
-export const getUserOrders = async (req ,res)=>{
-    try{
-        const userId = req.userId;
+// ==========================
+// Consumer Orders
+// ==========================
+export const getUserOrders = async (req, res) => {
+    try {
+
         const orders = await Order.find({
-            userId , 
-            $or:[{paymentType:"COD"} , {isPaid:true}]
-        }).populate("items.product address").sort({createdAt:-1});
-        res.json({success:true , orders})
-    }
-    catch(error){
-        res.json({success:false , message:error.message})
-    }
-}
+            consumerId: req.user.id,
+            $or: [
+                { paymentType: "COD" },
+                { isPaid: true }
+            ]
+        })
+            .populate("items.product")
+            .populate("address")
+            .sort({ createdAt: -1 });
 
-//Get All orders for seller : /api/order/seller
-export const getAllOrders = async (req ,res)=>{
-    try{
-        const orders = await Order.find({ 
-            $or:[{paymentType:"COD"} , {isPaid:true}]
-        }).populate("items.product address").sort({createdAt:-1});;
-        res.json({success:true , orders})
+        return res.json({
+            success: true,
+            orders,
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.json({
+            success: false,
+            message: error.message,
+        });
     }
-    catch(error){
-        res.json({success:false , message:error.message})
+};
+
+// ==========================
+// Farmer Orders
+// ==========================
+export const getFarmerOrders = async (req, res) => {
+    try {
+
+        const orders = await Order.find({
+            farmerId: req.user.id,
+            $or: [
+                { paymentType: "COD" },
+                { isPaid: true }
+            ]
+        })
+            .populate("consumerId", "name email phone")
+            .populate("items.product")
+            .populate("address")
+            .sort({ createdAt: -1 });
+
+        return res.json({
+            success: true,
+            orders,
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.json({
+            success: false,
+            message: error.message,
+        });
     }
-}
+};
+
+// ==========================
+// Admin Orders
+// ==========================
+export const getAllOrders = async (req, res) => {
+    try {
+
+        const orders = await Order.find({
+            $or: [
+                { paymentType: "COD" },
+                { isPaid: true }
+            ]
+        })
+            .populate("consumerId", "name email")
+            .populate("farmerId", "name email")
+            .populate("items.product")
+            .populate("address")
+            .sort({ createdAt: -1 });
+
+        return res.json({
+            success: true,
+            orders,
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+

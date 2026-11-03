@@ -1,38 +1,38 @@
 import React from "react";
-import { Link, NavLink, Outlet } from "react-router-dom";
-import { assets } from "../../assets/assets";
-import { useAppContext } from "../../context/AppContext";
-import { toast } from "react-hot-toast";
 
-const SellerLayout = () => {
+
+const AdminLayout = () => {
     const { axios ,navigate} = useAppContext();
 
 
-    const sidebarLinks = [
-        { name: "Add Product", path: "/seller", icon: assets.add_icon },
-        { name: "Product List", path: "/seller/product-list", icon: assets.product_list_icon },
-        { name: "Orders", path: "/seller/orders", icon: assets.order_icon },
-    ];
+    // const sidebarLinks = [
+    //     { name: "Add Product", path: "/seller", icon: assets.add_icon },
+    //     { name: "Product List", path: "/seller/product-list", icon: assets.product_list_icon },
+    //     { name: "Orders", path: "/seller/orders", icon: assets.order_icon },
+    // ];
 
-    const logout = async ()=>{
-        try{
-            const {data} = await axios.get('/api/seller/logout')
-            if(data.success){
-                toast.success(data.message);
-                navigate('/')
-            }
-            else{
-                toast.error(data.message)
-            }
-        }
-        catch(error){
-           toast.error(data.message)
-        }
+    // const logout = async ()=>{
+    //     try{
+    //         const {data} = await axios.get('/api/seller/logout')
+    //         if(data.success){
+    //             toast.success(data.message);
+    //             navigate('/')
+    //         }
+    //         else{
+    //             toast.error(data.message)
+    //         }
+    //     }
+    //     catch(error){
+    //        toast.error(data.message)
+    //     }
         
-    }
+    // }
     return (
         <>
-            <div className="flex items-center justify-between px-4 md:px-8 border-b border-gray-300 py-3 bg-white">
+           <div>
+               Admin Dashboard
+           </div>
+            {/* <div className="flex items-center justify-between px-4 md:px-8 border-b border-gray-300 py-3 bg-white">
                 <Link to='/'>
                     <img className="cursor-pointer w-34 md:w-38" src={assets.logo} alt="Logo" />
                 </Link>
@@ -58,10 +58,10 @@ const SellerLayout = () => {
                     ))}
                 </div>
             <Outlet/>
-            </div>
+            </div> */}
                
         </>
     );
 };
 
-export default SellerLayout;
+export default AdminLayout;
