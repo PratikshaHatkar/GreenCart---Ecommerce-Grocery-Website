@@ -1,4 +1,27 @@
-node_modules
+
+# Dependencies
+node_modules/
+
+# Environment variables
 .env
-.text
-.txt
+.env.*
+!.env.example
+
+# Text files
+*.text
+*.txt
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build files
+dist/
+build/
+
+# Local files
+*.local
